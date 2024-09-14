@@ -1,0 +1,157 @@
+{%extends 'base.html'%}
+{%block title%}Home - Nepolio{%endblock title%}
+{%block head%}
+<style>
+    .loading {
+        display: none; /* Hide by default */
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1000; /* Ensure it stays on top */
+    }
+    
+    .loading.show {
+        display: block; /* Show when needed */
+    }
+    
+    .spinner {
+        border: 8px solid rgba(0, 0, 0, 0.1);
+        border-left: 8px solid #3498db;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .stock-name-list {
+        padding: 0.75rem;
+    }
+
+    a :hover {
+        background-color: rgb(219, 218, 218);
+
+    }
+    .suggestions{
+        display: none;
+    }
+</style>
+{%endblock head%}
+{%block body%}
+
+<div class="addstockdetails hidden w-full min-h-screen absolute flex flex-col gap-2 bg-opacity-65 bg-gray-100 items-center justify-center">
+    <svg  class="classsvg size-7 cursor-pointer" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M6.99486 7.00636C6.60433 7.39689 6.60433 8.03005 6.99486 8.42058L10.58 12.0057L6.99486 15.5909C6.60433 15.9814 6.60433 16.6146 6.99486 17.0051C7.38538 17.3956 8.01855 17.3956 8.40907 17.0051L11.9942 13.4199L15.5794 17.0051C15.9699 17.3956 16.6031 17.3956 16.9936 17.0051C17.3841 16.6146 17.3841 15.9814 16.9936 15.5909L13.4084 12.0057L16.9936 8.42059C17.3841 8.03007 17.3841 7.3969 16.9936 7.00638C16.603 6.61585 15.9699 6.61585 15.5794 7.00638L11.9942 10.5915L8.40907 7.00636C8.01855 6.61584 7.38538 6.61584 6.99486 7.00636Z" fill="#0F0F0F"></path> </g></svg>
+    <div class="bg-white p-6 rounded-lg border border-solid border-black">
+        <h1 class="text-center text-xl font-bold">Enter Stock Details:</h1>
+        <form action="/" class="flex flex-col gap-4" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded
+            " type="submit">Submit</button>
+        </form>
+    </div>
+</div>
+<!-- Content container -->
+<nav class="flex items-center bg-gray-800">
+    <h2 class="flex-1 text-2xl font-bold"><span class="text-red-600">NEP</span><span class="text-blue-600">OLIO</span>
+    </h2>
+    <div class="relative search-box">
+        <input placeholder="Search..."
+            class="input input-box shadow-lg focus:border-2 bg-transparent border-gray-300 px-5 py-3 w-56 transition-all focus:w-64 outline-none text-white"
+            name="search" type="search" autocomplete="off" />
+        <button type="submit">
+            <svg class="size-6 absolute top-3 right-3 text-gray-500" stroke="currentColor" stroke-width="1.5"
+                viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+                    stroke-linejoin="round" stroke-linecap="round"></path>
+            </svg>
+        </button>
+        <div class="suggestions h-56 overflow-y-auto bg-white absolute w-full">
+        </div>
+
+    </div>
+</nav>
+{% if messages %}
+<div id="todestroy" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+    <div class="flex justify-center items-center">
+        <strong class="font-bold flex-1">Error</strong>
+        <svg id="clicksvg" class="w-6 h-6 cursor-pointer" viewBox="0 -0.5 25 25" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M6.96967 16.4697C6.67678 16.7626 6.67678 17.2374 6.96967 17.5303C7.26256 17.8232 7.73744 17.8232 8.03033 17.5303L6.96967 16.4697ZM13.0303 12.5303C13.3232 12.2374 13.3232 11.7626 13.0303 11.4697C12.7374 11.1768 12.2626 11.1768 11.9697 11.4697L13.0303 12.5303ZM11.9697 11.4697C11.6768 11.7626 11.6768 12.2374 11.9697 12.5303C12.2626 12.8232 12.7374 12.8232 13.0303 12.5303L11.9697 11.4697ZM18.0303 7.53033C18.3232 7.23744 18.3232 6.76256 18.0303 6.46967C17.7374 6.17678 17.2626 6.17678 16.9697 6.46967L18.0303 7.53033ZM13.0303 11.4697C12.7374 11.1768 12.2626 11.1768 11.9697 11.4697C11.6768 11.7626 11.6768 12.2374 11.9697 12.5303L13.0303 11.4697ZM16.9697 17.5303C17.2626 17.8232 17.7374 17.8232 18.0303 17.5303C18.3232 17.2374 18.3232 16.7626 18.0303 16.4697L16.9697 17.5303ZM11.9697 12.5303C12.2626 12.8232 12.7374 12.8232 13.0303 12.5303C13.3232 12.2374 13.3232 11.7626 13.0303 11.4697L11.9697 12.5303ZM8.03033 6.46967C7.73744 6.17678 7.26256 6.17678 6.96967 6.46967C6.67678 6.76256 6.67678 7.23744 6.96967 7.53033L8.03033 6.46967ZM8.03033 17.5303L13.0303 12.5303L11.9697 11.4697L6.96967 16.4697L8.03033 17.5303ZM13.0303 12.5303L18.0303 7.53033L16.9697 6.46967L11.9697 11.4697L13.0303 12.5303ZM11.9697 12.5303L16.9697 17.5303L18.0303 16.4697L13.0303 11.4697L11.9697 12.5303ZM13.0303 11.4697L8.03033 6.46967L6.96967 7.53033L11.9697 12.5303L13.0303 11.4697Z" fill="#000000"></path> </g></svg> 
+    </div>
+    <ul class="mt-2">
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+<div class="indicesdata">
+    <div class="indicesData grid grid-flow-col-dense overflow-x-scroll gap-3">
+
+    </div>
+</div>
+
+<div class="main mt-3">
+    <div class="yourportfolio">
+        <h1 class="text-3xl text-center ">Your Portfolio</h1>
+        <div class="grid grid-cols-2 gap-4">
+            <div class="p-4 bg-gray-100 shadow-md rounded-lg">
+                <div class="flex justify-between">
+                    <h1>Total Value:</h1>
+                    <p class="total-value"></p>
+                </div>
+                <div class="flex justify-between">
+                    <h1 class="">Return: </h1>
+                    <p class="total-pl"></p>
+                </div>
+                
+            </div>
+            <div class="p-4 bg-gray-100 shadow-md rounded-lg">
+                <h1>Total invested:</h1>
+                <p>{{portfolio.total_invested}}</p>
+            </div>
+        </div>
+        <div class="addstock">
+            <button class="p-3 my-5 w-full bg-gray-100 shadow-md rounded-lg hover:bg-gray-300">Add Stock</button>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full border border-black">
+                <thead>
+                    <tr class="text-center bg-gray-200">
+                        <th class="border px-4 py-2">S.N.</th>
+                        <th class="border px-4 py-2">Symbol</th>
+                        <th class="border px-4 py-2">Quantity</th>
+                        <th class="border px-4 py-2">Purchase Price</th>
+                        <th class="border px-4 py-2">LTP</th>
+                        <th class="border px-4 py-2">Profit/Loss</th>
+                        <th class="border px-4 py-2">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rows will go here -->
+                    {% for stock, details in portfolio.stocks.items %}
+                    <tr class="text-center">
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ stock }}</td>
+                        <td>{{details.quantity }}</td>
+                        <td>{{ details.at_bought }}</td>
+                        <td class="td-ltp-{{ stock }}"  >  </td>
+                        <td class="td-pl"> </td>
+                        <td class="flex justify-evenly">
+                            <button onclick="deleteStock('{{ stock }}')" class="p-1 w-full bg-red-500 shadow-md rounded-lg hover:bg-red-600">Delete</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+    </div>
+</div>
+
+
+{%endblock body%}

@@ -1,0 +1,24 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+    <title>{% block title %}{% endblock title %}</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="ie=edge">
+		<link rel="shortcut icon" href="{%static 'img/logo.png'%}" type="image/x-icon">
+		{% block head %}{% endblock head %}
+		{% tailwind_css %}
+	</head>
+
+	<body class="bg-gray-50 leading-normal tracking-normal">
+		<div id="loading" class="loading">
+			<div class="spinner"></div>
+		</div>
+		{% block body %}
+
+		{% endblock body %}
+		<script src="{% static 'js/cut.js' %}"></script>
+		<script src="{% static 'js/autocomplete.js' %}"></script>
+	</body>
+</html>

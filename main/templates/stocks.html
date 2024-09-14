@@ -1,0 +1,87 @@
+{%extends 'base.html'%}
+{%block title%} {{data.symbol}} - Nepolio {%endblock title%}
+{%block head%}
+<style>
+    .stock-name-list {
+        padding: 0.75rem;
+    }
+
+    a :hover {
+        background-color: rgb(219, 218, 218);
+
+    }
+    .suggestions{
+        display: none;
+    }
+</style>
+{%endblock head%}
+{%block body%}
+<nav class="flex items-center bg-gray-800">
+    <h2 class="flex-1 text-2xl font-bold"><span class="text-red-600">NEP</span><span class="text-blue-600">OLIO</span>
+    </h2>
+    <div class="search-box">
+        <div class="relative">
+            <input placeholder="Search by the Symbol..."
+                class="input input-box shadow-lg focus:border-2 bg-transparent border-gray-300 px-5 py-3 w-56 transition-all focus:w-64 outline-none text-white"
+                name="search" type="search" autocomplete="off" />
+            <button type="submit">
+                <svg class="size-6 absolute top-3 right-3 text-gray-500" stroke="currentColor" stroke-width="1.5"
+                    viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+                        stroke-linejoin="round" stroke-linecap="round"></path>
+                </svg>
+            </button>
+            <div class="suggestions h-56 overflow-y-auto bg-white absolute w-full">
+            </div>
+        </div>
+    </div>
+</nav>
+<div class="max-w-6xl mx-auto p-6">
+    <h1 class="text-center text-4xl font-bold mb-10">{{ data.symbol }}</h1>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+
+        <div class="p-4 bg-gray-100 shadow-md rounded-lg">
+            <h2 class="text-xl font-semibold">LTP</h2>
+            <p class="text-3xl font-bold text-green-600">{{ data.price }}</p>
+        </div>
+
+        <div class="p-4 bg-gray-100 shadow-md rounded-lg">
+            <h2 class="text-xl font-semibold">Point Change</h2>
+            <p class="text-3xl font-bold text-blue-600">{{ data.change }}</p>
+        </div>
+
+        <div class="p-4 bg-gray-100 shadow-md rounded-lg">
+            <h2 class="text-xl font-semibold">% Change</h2>
+            <p class="text-3xl font-bold text-blue-600">{{ data.changepercen }}%</p>
+        </div>
+
+        <div class="p-4 bg-gray-100 shadow-md rounded-lg">
+            <h2 class="text-xl font-semibold">Open</h2>
+            <p class="text-3xl font-bold">{{ data.open }}</p>
+        </div>
+
+        <div class="p-4 bg-gray-100 shadow-md rounded-lg">
+            <h2 class="text-xl font-semibold">High</h2>
+            <p class="text-3xl font-bold">{{ data.high }}</p>
+        </div>
+
+        <div class="p-4 bg-gray-100 shadow-md rounded-lg">
+            <h2 class="text-xl font-semibold">Low</h2>
+            <p class="text-3xl font-bold">{{ data.low }}</p>
+        </div>
+
+        <div class="p-4 bg-gray-100 shadow-md rounded-lg">
+            <h2 class="text-xl font-semibold">Volume</h2>
+            <p class="text-3xl font-bold">{{ data.volume }}</p>
+        </div>
+
+        <div class="p-4 bg-gray-100 shadow-md rounded-lg">
+            <h2 class="text-xl font-semibold">Previous Close</h2>
+            <p class="text-3xl font-bold">{{ data.prevclose }}</p>
+        </div>
+
+    </div>
+</div>
+
+{%endblock body%}
